@@ -8,55 +8,66 @@ import androidx.compose.ui.unit.dp
 import com.example.lab09.viewmodel.PostViewModel
 
 @Composable
-fun PostDetailScreen(id: Int, viewModel: PostViewModel) {
+fun PostDetailScreen(
+    id: Int,
+    viewModel: PostViewModel
+) {
     val post by viewModel.selectedPost.collectAsState()
-
     LaunchedEffect(id) {
         viewModel.loadPostById(id)
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        if (post == null) {
-            Text(text = "Cargando publicación...")
-        } else {
+        if (post != null) {
             OutlinedTextField(
                 value = post!!.id.toString(),
                 onValueChange = {},
                 label = { Text("ID") },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = post!!.userId.toString(),
                 onValueChange = {},
-                label = { Text("User ID") },
+                label = { Text("ID de Usuario") },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
             OutlinedTextField(
                 value = post!!.title,
                 onValueChange = {},
                 label = { Text("Título") },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
             OutlinedTextField(
                 value = post!!.body,
                 onValueChange = {},
                 label = { Text("Contenido") },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { viewModel.saveFavorite(post!!) },
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    viewModel.saveFavorite(post!!)
+                },
+                modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
             ) {
                 Text("Guardar en favoritos")
+            }
+
+            Text(
+                text = "Sheila Diaz Rojas",
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(top = 8.dp),
+                color = MaterialTheme.colorScheme.secondary
+            )
+        } else {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
     }

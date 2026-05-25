@@ -13,43 +13,41 @@ import androidx.compose.ui.unit.dp
 import com.example.lab09.viewmodel.PostViewModel
 
 @Composable
-fun FavoritesScreen(viewModel: PostViewModel) {
+fun FavoritesScreen(
+    viewModel: PostViewModel
+) {
     val favorites by viewModel.favorites.collectAsState()
-
     LaunchedEffect(Unit) {
         viewModel.loadFavorites()
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(text = "Favoritos", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn {
-            items(favorites) { post ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(favorites) { post ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "ID: ${post.id}", style = MaterialTheme.typography.labelSmall)
-                        Text(text = post.title, style = MaterialTheme.typography.titleMedium)
-                        Text(text = post.body, style = MaterialTheme.typography.bodySmall)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = { viewModel.deleteFavorite(post.id) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Eliminar favorito")
-                        }
+                    Text(text = "ID: ${post.id}", style = MaterialTheme.typography.labelSmall)
+                    Text(text = post.title, style = MaterialTheme.typography.titleMedium)
+                    Text(text = post.body, style = MaterialTheme.typography.bodySmall)
+                    Button(
+                        onClick = {
+                            viewModel.deleteFavorite(post.id)
+                        },
+                        modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
+                    ) {
+                        Text("Eliminar favorito")
                     }
+                    Text(
+                        text = "Sheila Diaz Rojas",
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(top = 4.dp),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
         }

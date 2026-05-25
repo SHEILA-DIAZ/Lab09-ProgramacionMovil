@@ -17,6 +17,6 @@ interface PostDao {
     @Query("DELETE FROM favorite_posts WHERE id = :id")
     suspend fun deletePost(id: Int)
 
-    @Query("SELECT COUNT(*) > 0 FROM favorite_posts WHERE id = :id")
+    @Query("SELECT EXISTS(SELECT 1 FROM favorite_posts WHERE id = :id)")
     suspend fun isFavorite(id: Int): Boolean
 }
