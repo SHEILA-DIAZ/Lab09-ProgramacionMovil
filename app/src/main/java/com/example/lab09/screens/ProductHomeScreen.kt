@@ -3,8 +3,9 @@ package com.example.lab09.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -13,10 +14,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -37,18 +40,30 @@ fun ProductHomeScreen(navController: NavHostController, viewModel: ProductViewMo
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFFFFE0B2), Color(0xFFE1F5FE))
+                    colors = listOf(Color(0xFFFF9A8B), Color(0xFFFF6A88), Color(0xFFFF99AC))
                 )
             )
     ) {
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(products) { product ->
-                ProductCard(product) {
-                    viewModel.selectProduct(product)
-                    navController.navigate("product_detail")
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "Premium Store",
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(16.dp),
+                color = Color.White
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(bottom = 80.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(products) { product ->
+                    PremiumProductCard(product) {
+                        viewModel.selectProduct(product)
+                        navController.navigate("product_detail")
+                    }
                 }
             }
         }
@@ -56,74 +71,72 @@ fun ProductHomeScreen(navController: NavHostController, viewModel: ProductViewMo
 }
 
 @Composable
-fun ProductCard(product: ProductModel, onClick: () -> Unit) {
+fun PremiumProductCard(product: ProductModel, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(12.dp, RoundedCornerShape(24.dp), spotColor = Color(0xFFFF6A88))
             .clickable { onClick() },
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = product.thumbnail,
-                contentDescription = product.title,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = product.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A237E)
+        Column {
+            Box {
+                AsyncImage(
+                    model = product.thumbnail,
+                    contentDescription = product.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+                    contentScale = ContentScale.Crop
                 )
-                Text(
-                    text = when(product.category.lowercase()) {
-                        "beauty" -> "Belleza"
-                        "fragrances" -> "Fragancias"
-                        "furniture" -> "Muebles"
-                        "groceries" -> "Comestibles"
-                        else -> product.category.replaceFirstChar { it.uppercase() }
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                
+                // Neon Price Badge
+                Surface(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.BottomEnd),
+                    color = Color(0xFF00E676), // Neon Green
+                    shape = RoundedCornerShape(8.dp),
+                    shadowElevation = 4.dp
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFB300),
-                        modifier = Modifier.size(16.dp)
-                    )
                     Text(
-                        text = product.rating.toString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(start = 4.dp)
+                        text = "$${product.price}",
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        fontWeight = FontWeight.Black,
+                        color = Color.Black
                     )
                 }
+            }
+
+            Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = "$${product.price}",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color(0xFF2E7D32),
-                    fontWeight = FontWeight.ExtraBold
+                    text = product.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Star, null, tint = Color(0xFFFFD700), modifier = Modifier.size(12.dp))
+                    Text(
+                        text = " ${product.rating}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+                
                 Text(
                     text = "Sheila Diaz Rojas",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFFE91E63)
+                    fontSize = 9.sp,
+                    color = Color(0xFFFF6A88),
+                    fontWeight = FontWeight.Medium
                 )
             }
         }

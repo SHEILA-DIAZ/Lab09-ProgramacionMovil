@@ -6,7 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -36,7 +36,7 @@ fun ProductDetailScreen(navController: NavHostController, viewModel: ProductView
                 title = { Text("Detalle del Producto", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -54,7 +54,7 @@ fun ProductDetailScreen(navController: NavHostController, viewModel: ProductView
                     .verticalScroll(rememberScrollState())
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.White, Color(0xFFE1F5FE))
+                            colors = listOf(Color.White, Color(0xFFF3F4F6))
                         )
                     )
             ) {
@@ -63,16 +63,37 @@ fun ProductDetailScreen(navController: NavHostController, viewModel: ProductView
                     contentDescription = item.title,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)),
+                        .height(350.dp)
+                        .clip(RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp)),
                     contentScale = ContentScale.Crop
                 )
 
                 Column(modifier = Modifier.padding(24.dp)) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = when(item.category.lowercase()) {
+                                "beauty" -> "BELLEZA"
+                                "fragrances" -> "FRAGANCIAS"
+                                "furniture" -> "MUEBLES"
+                                "groceries" -> "COMESTIBLES"
+                                else -> item.category.uppercase()
+                            },
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.Top
                     ) {
                         Text(
                             text = item.title,
@@ -81,17 +102,18 @@ fun ProductDetailScreen(navController: NavHostController, viewModel: ProductView
                             color = Color(0xFF1A237E),
                             modifier = Modifier.weight(1f)
                         )
-                        Surface(
-                            color = Color(0xFFFFD54F),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(Icons.Default.Star, null, tint = Color(0xFFF57C00), modifier = Modifier.size(18.dp))
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = "$${item.price}",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Black,
+                                color = Color(0xFF2E7D32)
+                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Star, null, tint = Color(0xFFFFB300), modifier = Modifier.size(16.dp))
                                 Text(
                                     text = item.rating.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(start = 4.dp)
                                 )
@@ -99,21 +121,7 @@ fun ProductDetailScreen(navController: NavHostController, viewModel: ProductView
                         }
                     }
 
-                    Text(
-                        text = item.category.uppercase(),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-
-                    Text(
-                        text = "$${item.price}",
-                        style = MaterialTheme.typography.displaySmall,
-                        fontWeight = FontWeight.Black,
-                        color = Color(0xFF2E7D32)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
                         text = "Descripción",
@@ -122,30 +130,34 @@ fun ProductDetailScreen(navController: NavHostController, viewModel: ProductView
                         color = Color(0xFF1A237E)
                     )
 
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
                         text = item.description,
                         style = MaterialTheme.typography.bodyLarge,
                         lineHeight = 24.sp,
-                        color = Color.DarkGray,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        color = Color.DarkGray
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
                     
                     Button(
                         onClick = { /* Acción de compra */ },
-                        modifier = Modifier.fillMaxWidth().height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth().height(60.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
                     ) {
-                        Text("Añadir al Carrito", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("Comprar Ahora", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     Text(
-                        text = "Vendedor: Sheila Diaz Rojas",
+                        text = "Vendedor verificado: Sheila Diaz Rojas",
                         style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(top = 16.dp).align(Alignment.CenterHorizontally),
-                        color = Color(0xFFE91E63)
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color(0xFFE91E63),
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
